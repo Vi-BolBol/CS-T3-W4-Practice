@@ -35,8 +35,34 @@ app.use((req, res, next) => {
 });
 
 // GET /users - List all users
+// app.get('/users', (req, res) => {
+//     res.json(users);
+// });
+
+// GET /users - with search params, pages, and limit
 app.get('/users', (req, res) => {
-    res.json(users);
+    const { search, page, limit } = req.query;
+    let result = users;
+    if(search){
+        result = result.filter(u => 
+            u.name.toLowerCase().includes(search.toLowerCase()) ||
+            u.email.toLowerCase().includes(search.toLowerCase())
+        );
+    }
+    if(page || limit){
+        const pageNum = parseInt(page) || 1;
+        const pageSize = parseInt(limit) || 5;
+        const start = (pageNum - 1) * pageSize;
+
+        return res.json({
+            total: result.length,
+            page: pageNum,
+            limit: pageSize,
+            totalPages: Math.ceil(result.length / pageSize),
+            data: result.slice(start, start + pageSize)
+        });
+    }
+    res.json(result);
 });
 
 // GET /users/:id - Get one user
