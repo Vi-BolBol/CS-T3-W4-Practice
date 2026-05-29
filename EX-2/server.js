@@ -1,13 +1,12 @@
 import express from 'express';
-import { articles } from './models/data';
+import router from './routes/articleRoutes.js';
 
 const app = express();
 
 const PORT = 3000;
 
-// app.get('/', (req, res) => {
-//     res.json(articles)
-// });
+app.use(express.json());
+app.use('/articles', router);
 
 app.listen(PORT, () => {
     console.log(`🚀 Server is running on http://localhost:${PORT}`);
